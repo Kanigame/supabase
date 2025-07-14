@@ -20,7 +20,6 @@ export interface LogsWarning {
   linkText?: string
 }
 export interface LogsEndpointParams {
-  project: string // project ref
   iso_timestamp_start?: string
   iso_timestamp_end?: string
   sql?: string
@@ -91,6 +90,7 @@ export type QueryType =
   | 'supavisor'
   | 'postgrest'
   | 'warehouse'
+  | 'pg_upgrade'
   | 'pg_cron'
   | 'pgbouncer'
 

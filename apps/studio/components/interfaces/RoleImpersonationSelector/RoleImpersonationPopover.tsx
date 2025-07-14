@@ -8,15 +8,19 @@ import { getAvatarUrl, getDisplayName } from '../Auth/Users/Users.utils'
 import RoleImpersonationSelector from './RoleImpersonationSelector'
 
 export interface RoleImpersonationPopoverProps {
+  portal?: boolean
   serviceRoleLabel?: string
   variant?: 'regular' | 'connected-on-right' | 'connected-on-left' | 'connected-on-both'
   align?: 'center' | 'start' | 'end'
+  disallowAuthenticatedOption?: boolean
 }
 
 const RoleImpersonationPopover = ({
+  portal = true,
   serviceRoleLabel,
   variant = 'regular',
   align = 'end',
+  disallowAuthenticatedOption = false,
 }: RoleImpersonationPopoverProps) => {
   const state = useRoleImpersonationStateSnapshot()
 
@@ -25,7 +29,7 @@ const RoleImpersonationPopover = ({
   const currentRole = state.role?.role ?? serviceRoleLabel ?? 'service role'
 
   return (
-    <Popover_Shadcn_ open={isOpen} onOpenChange={setIsOpen} modal={false}>
+    <Popover_Shadcn_ open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger_Shadcn_ asChild>
         <Button
           size="tiny"
@@ -56,8 +60,16 @@ const RoleImpersonationPopover = ({
           </div>
         </Button>
       </PopoverTrigger_Shadcn_>
-      <PopoverContent_Shadcn_ className="p-0 w-full overflow-hidden" side="bottom" align={align}>
-        <RoleImpersonationSelector serviceRoleLabel={serviceRoleLabel} />
+      <PopoverContent_Shadcn_
+        portal={portal}
+        className="p-0 w-full overflow-hidden"
+        side="bottom"
+        align={align}
+      >
+        <RoleImpersonationSelector
+          serviceRoleLabel={serviceRoleLabel}
+          disallowAuthenticatedOption={disallowAuthenticatedOption}
+        />
       </PopoverContent_Shadcn_>
     </Popover_Shadcn_>
   )

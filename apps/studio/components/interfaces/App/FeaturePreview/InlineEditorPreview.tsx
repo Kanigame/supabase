@@ -1,7 +1,6 @@
 import Image from 'next/image'
 
 import { BASE_PATH } from 'lib/constants'
-import { Admonition } from 'ui-patterns'
 
 export const InlineEditorPreview = () => {
   return (
@@ -13,15 +12,15 @@ export const InlineEditorPreview = () => {
         alt="api-docs-side-panel-preview"
         className="rounded border mb-4"
       />
-      <p className="text-sm text-foreground-light">
+      <p className="text-sm text-foreground-light mb-4">
         Edit policies, functions, and triggers directly in the inline SQL editor. When you select
         any of these database objects, the editor opens automatically, allowing you to make changes
         without switching contexts.
       </p>
-      <Admonition type="note" className="my-4">
+      <p className="text-sm text-foreground-light mb-4">
         Need help writing SQL? Use the inline Assistant to generate or modify code for your
         policies, triggers, and functions without leaving the editor.
-      </Admonition>
+      </p>
       <p className="text-sm text-foreground-light">
         Access the inline editor anytime by clicking the code editor icon in the top right corner of
         your dashboard.

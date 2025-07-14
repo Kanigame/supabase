@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from 'ui'
-import { generatePolicyCreateSQL } from './PolicyTableRow.utils'
+import { generatePolicyUpdateSQL } from './PolicyTableRow.utils'
 
 interface PolicyRowProps {
   policy: PostgresPolicy
@@ -69,20 +69,21 @@ const PolicyRow = ({
           <div className="flex flex-col gap-y-1">
             <Button
               type="text"
-              className="h-auto text-foreground text-sm border-none p-0 hover:bg-transparent"
+              className="h-auto text-foreground text-sm border-none p-0 hover:bg-transparent justify-start"
               onClick={() => onSelectEditPolicy(policy)}
             >
               {policy.name}
             </Button>
             <div className="flex items-center gap-x-1">
               <div className="text-foreground-lighter text-sm">
-                Applied to:
+                Applied to:{' '}
                 {policy.roles.slice(0, 3).map((role, i) => (
-                  <code key={`policy-${role}-${i}`} className="text-foreground-light text-xs">
-                    {role}
-                  </code>
-                ))}{' '}
-                role
+                  <span key={`policy-${role}-${i}`}>
+                    <code className="text-foreground-light text-xs">{role}</code>
+                    {i < Math.min(policy.roles.length, 3) - 1 ? ', ' : ' '}
+                  </span>
+                ))}
+                {policy.roles.length > 1 ? 'roles' : 'role'}
               </div>
               {policy.roles.length > 3 && (
                 <Tooltip>
@@ -118,7 +119,7 @@ const PolicyRow = ({
               <DropdownMenuItem
                 className="space-x-2"
                 onClick={() => {
-                  const sql = generatePolicyCreateSQL(policy)
+                  const sql = generatePolicyUpdateSQL(policy)
                   aiSnap.newChat({
                     name: `Update policy ${policy.name}`,
                     open: true,
@@ -127,9 +128,18 @@ const PolicyRow = ({
                     suggestions: {
                       title: `I can help you make a change to the policy "${policy.name}" in the ${policy.schema} schema on the ${policy.table} table, here are a few example prompts to get you started:`,
                       prompts: [
-                        'Tell me how I can improve this policy...',
-                        'Duplicate this policy for another table...',
-                        'Add extra conditions to this policy...',
+                        {
+                          label: 'Improve Policy',
+                          description: 'Tell me how I can improve this policy...',
+                        },
+                        {
+                          label: 'Duplicate Policy',
+                          description: 'Duplicate this policy for another table...',
+                        },
+                        {
+                          label: 'Add Conditions',
+                          description: 'Add extra conditions to this policy...',
+                        },
                       ],
                     },
                   })
