@@ -244,3 +244,33 @@ sinks:
       headers:
         x-api-key: ${LOGFLARE_PUBLIC_ACCESS_TOKEN?LOGFLARE_PUBLIC_ACCESS_TOKEN is required}
     uri: 'http://analytics:4000/api/logs?source_name=cloudflare.logs.prod'
+
+data_dir: /var/lib/vector
+
+sources:
+  docker_host:
+    type: docker_logs
+    # point to Docker Desktop TCP socket
+    docker_host: "tcp://host.docker.gateway:2375"
+
+
+sinks:
+  # send to analytics service
+  logflare:
+    type: http
+    inputs:
+      - auth_logs
+      - realtime_logs
+      - rest_logs
+      - db_logs
+      - storage_logs
+      - functions_logs
+      - kong_logs
+    encoding:
+      codec: json
+    method: post
+    uri: "http://analytics:4000/api/logs" # or supabase-analytics container
+    request:
+      retry_max_duration_secs: 10
+      headers:
+        x-api-key: "${LOGFLARE_PUBLIC_ACCESS_TOKEN}"

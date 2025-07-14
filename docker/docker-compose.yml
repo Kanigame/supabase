@@ -48,8 +48,8 @@ services:
       NEXT_PUBLIC_ENABLE_LOGS: true
       # Comment to use Big Query backend for analytics
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
-      # Uncomment to use Big Query backend for analytics
-      # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+    # Uncomment to use Big Query backend for analytics
+    # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
     networks: [ "shared" ]
 
   kong:
@@ -144,25 +144,25 @@ services:
 
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-      # Uncomment to enable custom access token hook. Please see: https://supabase.com/docs/guides/auth/auth-hooks for full list of hooks and additional details about custom_access_token_hook
+    # Uncomment to enable custom access token hook. Please see: https://supabase.com/docs/guides/auth/auth-hooks for full list of hooks and additional details about custom_access_token_hook
 
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: "pg-functions://postgres/public/custom_access_token_hook"
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_SECRETS: "<standard-base64-secret>"
+    # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
+    # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: "pg-functions://postgres/public/custom_access_token_hook"
+    # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_SECRETS: "<standard-base64-secret>"
 
-      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_ENABLED: "true"
-      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/mfa_verification_attempt"
+    # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_ENABLED: "true"
+    # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/mfa_verification_attempt"
 
-      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_ENABLED: "true"
-      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/password_verification_attempt"
+    # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_ENABLED: "true"
+    # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/password_verification_attempt"
 
-      # GOTRUE_HOOK_SEND_SMS_ENABLED: "false"
-      # GOTRUE_HOOK_SEND_SMS_URI: "pg-functions://postgres/public/custom_access_token_hook"
-      # GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
+    # GOTRUE_HOOK_SEND_SMS_ENABLED: "false"
+    # GOTRUE_HOOK_SEND_SMS_URI: "pg-functions://postgres/public/custom_access_token_hook"
+    # GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
 
-      # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
-      # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
-      # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
+    # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
+    # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
+    # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
     networks: [ "shared" ]
 
   rest:
@@ -391,9 +391,9 @@ services:
       POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
       POSTGRES_BACKEND_SCHEMA: _analytics
       LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
-      # Uncomment to use Big Query backend for analytics
-      # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
-      # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
+    # Uncomment to use Big Query backend for analytics
+    # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
+    # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
     networks: [ "shared" ]
 
   # Comment out everything below this point if you are using an external Postgres database
@@ -461,7 +461,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
-      - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
     healthcheck:
       test:
         [
