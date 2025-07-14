@@ -526,3 +526,7 @@ services:
 
 volumes:
   db-config:
+  
+networks:
+  shared:
+    external: true
