@@ -55,6 +55,7 @@ export default function JWTSecretKeysTable() {
   const newJwtSecrets = useFlag('newJwtSecrets')
 
   const [selectedKey, setSelectedKey] = useState<JWTSigningKey>()
+  const [selectedKeyToUpdate, setSelectedKeyToUpdate] = useState<string>()
   const [shownDialog, setShownDialog] = useState<DialogType>()
 
   const { data: signingKeys, isLoading: isLoadingSigningKeys } = useJWTSigningKeysQuery({
@@ -76,7 +77,12 @@ export default function JWTSecretKeysTable() {
   )
 
   const { mutate: updateJWTSigningKey, isLoading: isUpdatingJWTSigningKey } =
-    useJWTSigningKeyUpdateMutation({ onSuccess: () => resetDialog() })
+    useJWTSigningKeyUpdateMutation({
+      onSuccess: () => {
+        resetDialog()
+        setSelectedKeyToUpdate(undefined)
+      },
+    })
   const { mutate: deleteJWTSigningKey, isLoading: isDeletingJWTSigningKey } =
     useJWTSigningKeyDeleteMutation({ onSuccess: () => resetDialog(), onError: () => resetDialog() })
 
@@ -118,19 +124,33 @@ export default function JWTSecretKeysTable() {
   }
 
   const handlePreviouslyUsedKey = async (keyId: string) => {
-    updateJWTSigningKey({ projectRef, keyId, status: 'previously_used' })
+    setSelectedKeyToUpdate(keyId)
+    updateJWTSigningKey(
+      { projectRef, keyId, status: 'previously_used' },
+      { onSuccess: () => toast.success('Successfully moved key to previously used') }
+    )
   }
 
   const handleStandbyKey = (keyId: string) => {
-    updateJWTSigningKey({ projectRef: projectRef!, keyId, status: 'standby' })
+    setSelectedKeyToUpdate(keyId)
+    updateJWTSigningKey(
+      { projectRef: projectRef!, keyId, status: 'standby' },
+      { onSuccess: () => toast.success('Successfully moved key to standby') }
+    )
   }
 
   const handleRevokeKey = (keyId: string) => {
-    updateJWTSigningKey({ projectRef: projectRef!, keyId, status: 'revoked' })
+    updateJWTSigningKey(
+      { projectRef: projectRef!, keyId, status: 'revoked' },
+      { onSuccess: () => toast.success('Successfully revoked key') }
+    )
   }
 
   const handleDeleteKey = (keyId: string) => {
-    deleteJWTSigningKey({ projectRef: projectRef!, keyId })
+    deleteJWTSigningKey(
+      { projectRef: projectRef!, keyId },
+      { onSuccess: () => toast.success('Successfully deleted key') }
+    )
   }
 
   if (isLoading) {
@@ -152,7 +172,7 @@ export default function JWTSecretKeysTable() {
                 description="Switch the standby key to in use. All new JSON Web Tokens issued by Supabase Auth will be signed with this key."
                 buttonLabel="Rotate keys"
                 onClick={() => setShownDialog('rotate')}
-                loading={isLoadingMutation}
+                loading={isUpdatingJWTSigningKey}
                 icon={<RotateCw className="size-4" />}
                 type="primary"
               />
@@ -206,12 +226,15 @@ export default function JWTSecretKeysTable() {
                         <SigningKeyRow
                           key={standbyKey.id}
                           signingKey={standbyKey}
+                          legacyKey={legacyKey}
+                          standbyKey={standbyKey}
+                          isLoading={
+                            selectedKeyToUpdate === standbyKey.id && isUpdatingJWTSigningKey
+                          }
                           setSelectedKey={setSelectedKey}
                           setShownDialog={setShownDialog}
                           handleStandbyKey={handleStandbyKey}
                           handlePreviouslyUsedKey={handlePreviouslyUsedKey}
-                          legacyKey={legacyKey}
-                          standbyKey={standbyKey}
                         />
                       )}
                       {inUseKey && (
@@ -257,6 +280,9 @@ export default function JWTSecretKeysTable() {
                         <TableHead className="text-left font-mono uppercase text-xs text-foreground-muted h-auto py-2">
                           Type
                         </TableHead>
+                        <TableHead className="text-right font-mono uppercase text-xs text-foreground-muted h-auto py-2 hidden lg:table-cell">
+                          Last rotated at
+                        </TableHead>
                         <TableHead className="text-right font-mono uppercase text-xs text-foreground-muted h-auto py-2">
                           Actions
                         </TableHead>
@@ -268,20 +294,27 @@ export default function JWTSecretKeysTable() {
                           <SigningKeyRow
                             key={key.id}
                             signingKey={key}
+                            legacyKey={legacyKey}
+                            standbyKey={standbyKey}
+                            isLoading={selectedKeyToUpdate === key.id && isUpdatingJWTSigningKey}
                             setSelectedKey={setSelectedKey}
                             setShownDialog={setShownDialog}
                             handleStandbyKey={handleStandbyKey}
                             handlePreviouslyUsedKey={handlePreviouslyUsedKey}
-                            legacyKey={legacyKey}
-                            standbyKey={standbyKey}
                           />
                         ))}
                       </AnimatePresence>
                     </TableBody>
                   </Table>
                 ) : (
-                  <div className="flex items-center justify-center text-sm text-foreground-light p-6">
-                    No previously used keys
+                  <div className="flex flex-col items-center justify-center text-center text-foreground-light p-8 gap-2">
+                    <Timer className="size-6 text-foreground-lighter" />
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-medium">No previously used keys</p>
+                      <p className="text-xs text-foreground-lighter">
+                        Rotated keys will appear here for verification of existing tokens
+                      </p>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -311,6 +344,9 @@ export default function JWTSecretKeysTable() {
                     </TableHead>
                     <TableHead className="text-left font-mono uppercase text-xs text-foreground-muted h-auto py-2">
                       Type
+                    </TableHead>
+                    <TableHead className="text-right font-mono uppercase text-xs text-foreground-muted h-auto py-2 hidden lg:table-cell">
+                      Last rotated at
                     </TableHead>
                     <TableHead className="text-right font-mono uppercase text-xs text-foreground-muted h-auto py-2">
                       Actions
